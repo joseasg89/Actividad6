@@ -1,6 +1,6 @@
 //
-//  Actividad5Tests.swift
-//  Actividad5Tests
+//  Actividad6Tests.swift
+//  Actividad6Tests
 //
 //  Created by usuario on 1/9/19.
 //  Copyright © 2019 usuario. All rights reserved.
