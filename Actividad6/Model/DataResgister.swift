@@ -11,6 +11,7 @@ import UIKit
 class DataResgister: NSObject {
     let dtCobranza = Cobranza(
         CoEmpleado: [Empleado(Nombre: "Isidro Renteria",
+                              IdEmpleado: 1,
                               latitude: 19.4336523,
                               longitude: -99.1454316,
                               latDelta: 0.5,
@@ -32,6 +33,7 @@ class DataResgister: NSObject {
                                                 Adeudo: 1000,
                                                 Notas: "Solo falta un pago")]),
                      Empleado(Nombre: "Jesus Iturbe",
+                              IdEmpleado: 2,
                               latitude: 19.4336523,
                               longitude: -99.1454316,
                               latDelta: 0.5,
@@ -43,6 +45,7 @@ class DataResgister: NSObject {
                                                 Adeudo: 150000,
                                                 Notas: "No responde las llamadas")]),
                      Empleado(Nombre: "Eduardo Santana",
+                              IdEmpleado: 3,
                               latitude: 19.4336523,
                               longitude: -99.1454316,
                               latDelta: 0.5,

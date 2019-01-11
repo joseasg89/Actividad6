@@ -16,6 +16,19 @@ class ViewController2: UIViewController {
         self.tblDeudor.dataSource = self
         self.tblDeudor.delegate = self
     }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vcd = segue.destination as? ViewController5 {
+            vcd.NumEmp = EmpDeudor?.IdEmpleado
+        }
+    }
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        if EmpDeudor?.IdEmpleado == nil {
+            print("error")
+            return false
+        }else{
+            return true
+        }
+    }
 
 }
 extension ViewController2 : UITableViewDataSource {

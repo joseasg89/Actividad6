@@ -10,13 +10,69 @@ import UIKit
 import CoreData
 
 class ViewController4: UIViewController {
-
+    var nextNumEmpl : Int?
+    var validador : Bool = false
+    @IBOutlet weak var txtNombre: UITextField!
+    @IBOutlet weak var lblNombre: UILabel!
+    @IBAction func txtNombreChang(_ sender: Any) {
+        if txtNombre.text?.isEmpty == true{
+            lblNombre.text = "El campo es Obligatorio"
+            validador = false
+        }else{
+            lblNombre.text = ""
+        }
+    }
+    @IBOutlet weak var txtCargo: UITextField!
+    @IBOutlet weak var lblCargo: UILabel!
+    @IBAction func txtCargoChang(_ sender: Any) {
+        if txtCargo.text?.isEmpty == true{
+            lblCargo.text = "El campo es Obligatorio"
+            validador = false
+        }else{
+            lblCargo.text = ""
+        }
+    }
+    @IBOutlet weak var lblError: UILabel!
+    @IBAction func btnSave(_ sender: Any) {
+        validador = true
+        txtNombreChang(txtNombre)
+        txtCargoChang(txtCargo)
+        
+        if validador == true{
+            lblError.text = ""
+            DispatchQueue.main.async {
+                //MARK: Crear Contexto
+                let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                let context = appDelegate.persistentContainer.viewContext
+                
+                //MARK: Insertar
+                let emp = Empleados(context: context)
+                emp.idEmpleado = Int32(self.nextNumEmpl!)
+                emp.nombre = self.txtNombre.text
+                emp.cargo = self.txtCargo.text
+                appDelegate.saveContext()
+                
+                let storyboard = UIStoryboard.init(name: "Main", bundle: nil)
+                let controller = storyboard.instantiateViewController(withIdentifier: "VC")
+                self.present(controller, animated: true, completion: nil)
+            }
+        }else{
+            lblError.text = "falta informacion"
+        }
+    }
+    @IBAction func btnSalir(_ sender: Any) {
+        DispatchQueue.main.async {
+            let storyboard = UIStoryboard.init(name: "Main", bundle: nil)
+            let controller = storyboard.instantiateViewController(withIdentifier: "VC")
+            self.present(controller, animated: true, completion: nil)
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //MARK: Crear Contexto
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let context = appDelegate.persistentContainer.viewContext
+//        //MARK: Crear Contexto
+//        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+//        let context = appDelegate.persistentContainer.viewContext
         
         //MARK: Insertar
 //        let emp = Empleados(context: context)
@@ -51,13 +107,10 @@ class ViewController4: UIViewController {
         
 
         //MARK: Consultar
-        let fetchReqs = NSFetchRequest<NSFetchRequestResult>(entityName: "Deudores")
-        do {
-            let fetch = try context.fetch(fetchReqs) as! [Deudores]
-
-            print(type(of:fetch))
-            for item in fetch{
-                print(item.nombre!)
+//        let fetchReqs = NSFetchRequest<NSFetchRequestResult>(entityName: "Deudores")
+//        do {
+//            let fetch = try context.fetch(fetchReqs) as! [Deudores]
+//            for item in fetch{
 //                print(item.idEmpleado)
 //
 //                if item.nombre == "Mauricio Alarcon" {
@@ -91,9 +144,9 @@ class ViewController4: UIViewController {
 //                    context.delete(item)
 //                    try context.save()
 //                }
-            }
-        } catch {
-            fatalError("Failed to fetch users: \(error)")
-        }
+//            }
+//        } catch {
+//            fatalError("Failed to fetch users: \(error)")
+//        }
     }
 }

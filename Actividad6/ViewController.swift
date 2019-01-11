@@ -14,10 +14,14 @@ class ViewController: UIViewController {
     @IBOutlet weak var tblEmpleado: UITableView!
     var objCobranza = Cobranza(CoEmpleado: [])
     var objDeudor: [Deudor] = []
+    var newobjDeudor: [Deudor] = []
+    var contNumEmp: Int = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         var contEmp: Int = 0
         var contDeu: Int = 0
+        var contFetch: Int = 0
+        
         
         //MARK: Crear Contexto
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -35,16 +39,23 @@ class ViewController: UIViewController {
                     let fetch2 = try context.fetch(fetchReqs2) as! [Deudores]
                     
                     for item2 in fetch2{
+                        contFetch = contFetch+1
                         if item2.value(forKey: "idEmpleado") as! Int == item.value(forKey: "idEmpleado") as! Int{
                             objDeudor.insert(Deudor(Nombre: item2.nombre!, latitude: item2.latitude, longitude: item2.longitude, Adeudo: Int(item2.deuda), Notas: item2.nota!), at: contDeu)
                             contDeu = contDeu + 1
+                        }
+                        if contFetch == fetch2.count{
+                            objCobranza.CoEmpleado.insert(Empleado(Nombre: item.nombre!, IdEmpleado: Int(item.idEmpleado), latitude: 19.4336523, longitude: -99.1454316, latDelta: 0.5, lonDelta: 0.5, Cargo: item.cargo!, Deudores: objDeudor), at: contEmp)
+                            objDeudor = newobjDeudor
+                            contFetch = 0
+                            contDeu = 0
                         }
                     }
                 } catch {
                     fatalError("Failed to fetch users: \(error)")
                 }
                 
-                objCobranza.CoEmpleado.insert(Empleado(Nombre: item.nombre!, latitude: 19.4336523, longitude: -99.1454316, latDelta: 0.5, lonDelta: 0.5, Cargo: item.cargo!, Deudores: objDeudor), at: contEmp)
+                
                 contEmp = contEmp + 1
             }
             
@@ -60,6 +71,10 @@ class ViewController: UIViewController {
 }
 
 extension ViewController : UITableViewDataSource {
+//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        print(section)
+//        return "Section \(section + 1)"
+//    }
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -72,8 +87,9 @@ extension ViewController : UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let row = indexPath.row
-        let nombre = objCobranza.CoEmpleado[row].Nombre
+        let nombre = "\(objCobranza.CoEmpleado[row].IdEmpleado) - \(objCobranza.CoEmpleado[row].Nombre)"
         let cargo = objCobranza.CoEmpleado[row].Cargo
+        
         
         cell.textLabel?.text = nombre
         cell.detailTextLabel?.text = cargo
@@ -84,6 +100,30 @@ extension ViewController : UITableViewDataSource {
             cell.backgroundColor = UIColor.white
         }
         return cell
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vcd = segue.destination as? ViewController4 {
+            vcd.nextNumEmpl = contNumEmp
+        }
+    }
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        contNumEmp = 0
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        let fetchReqs = NSFetchRequest<NSFetchRequestResult>(entityName: "Empleados")
+        do{
+            let fetch = try context.fetch(fetchReqs) as! [Empleados]
+            contNumEmp = fetch.count + 1
+        }catch {
+            fatalError("Failed to fetch users: \(error)")
+        }
+        if contNumEmp == 0 {
+            print("error")
+            return false
+        }else{
+            return true
+        }
     }
     
 }
